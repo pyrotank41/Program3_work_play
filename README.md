@@ -17,7 +17,7 @@ Using dictionary.txt of 235,886 words.  Running the program should look like the
     Program #3: Work Play
     Author: Karan Singh Kochar and Lilly C
     Lab: Tues 8am
-    System:  Codio
+    System:  Atom on linux
 
     Total number of words in dictionary file: 235886
 
@@ -77,10 +77,11 @@ Using dictionary.txt of 235,886 words.  Running the program should look like the
 
 Running your program again could look like the following:
 
+ 
     Program #3: Work Play
-    Author: Dale Reed
+    Author: Karan Singh Kochar and Lilly C
     Lab: Tues 8am
-    System:  Codio
+    System:  Atom on linux
 
     Total number of words in dictionary file: 235886
 
@@ -212,10 +213,11 @@ Running your program again could look like the following:
 
 Note that the defaults are to work with words of size 3, with the default starting word being "dog" and the default end word being "cat".  Running the program again might look like the following:
 
+
     Program #3: Work Play
-    Author: Dale Reed
+    Author: Karan Singh Kochar and Lilly C
     Lab: Tues 8am
-    System:  Codio
+    System:  Atom on linux
 
     Total number of words in dictionary file: 235886
 
