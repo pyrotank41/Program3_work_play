@@ -7,6 +7,10 @@
  *
 */
 
+/* play space her
+
+*/
+
 #include <iostream>     // for input out put to terminal
 #include <cctype>       // For the letter checking functions
 #include <fstream>      // For file input
@@ -50,23 +54,23 @@ ifstream openTextFile( string nameOfFile = " " ){
 }
 
 // Storing all the words in a words in a vector ----------------------------------------------
-void storeWordsInVector(vector<string>& wordList, string nameOfFile){
+void storeWordsInVector(vector<string>& dictionary, string nameOfFile){
   ifstream inputFileStream = openTextFile(nameOfFile);
   string line;
   int count = 0;
   while(getline(inputFileStream, line)){
-    wordList.push_back(line);
+    dictionary.push_back(line);
   }
   inputFileStream.close();
 
 } // storeWordsInVector() ends here.
 
 // getWordOccurance starts here ----------------------------------------------------------------------------
-void getWordOccurance(vector<int>& wordOccuranceQuantity, vector<string> wordList){
+void getWordOccurance(vector<int>& wordOccuranceQuantity, vector<string> dictionary){
   int longestWordLength = 0;
   // Get the highest char length of word
-  for(int i = 0; i < wordList.size(); i++){
-    string line = wordList.at(i);
+  for(int i = 0; i < dictionary.size(); i++){
+    string line = dictionary.at(i);
     if(line.size() > longestWordLength){
       longestWordLength = line.size();
     }
@@ -78,8 +82,8 @@ void getWordOccurance(vector<int>& wordOccuranceQuantity, vector<string> wordLis
   // index will store 69 as a value.
   wordOccuranceQuantity.resize(longestWordLength);
 
-  for (int i = 0; i < wordList.size(); i++) {
-    string line = wordList.at(i);
+  for (int i = 0; i < dictionary.size(); i++) {
+    string line = dictionary.at(i);
     wordOccuranceQuantity.at( line.length() -1) += 1;
   }
 
@@ -107,7 +111,39 @@ void printQuantity(vector<int> wordOccuranceQuantity){
            << wordOccuranceQuantity.at(i) << endl;
     }
   }
+
+  cout << endl;
 } // printQuantity() ends here
+
+long binarySearch(string searchWord, vector< string> dictionary){
+
+    long low, mid, high;     // array indices for binary search
+    long searchResult = -1;  // Stores index of word if search succeeded, else -1
+
+    // Binary search for word
+    low = 0;
+    high = dictionary.size() - 1;
+    while ( low <= high)  {
+        mid = (low + high) / 2;
+        // SearchResult negative value means word is to the left, positive value means
+        // word is to the right, value of 0 means word was found
+        searchResult = searchWord.compare( dictionary[ mid] );
+        if ( searchResult == 0)  {
+            // Word IS in dictionary, so return the index where the word was found
+            return mid;
+        }
+        else if (searchResult < 0)  {
+            high = mid - 1; // word should be located before the mid location
+        }
+        else  {
+            low = mid + 1; // word should be located after the mid location
+        }
+    }
+
+    // Word was not found
+    return -1;
+}//end binarySearch()
+
 
 // main() starts here ----------------------------------------------------------------------------
 int main() {
@@ -116,17 +152,17 @@ int main() {
   displayIdInfo();
 
   // initializing vectors
-  vector<string> wordList;
+  vector<string> dictionary;
   vector<int> wordOccuranceQuantity;
   int wordLength = 3;
   int userChoice;
 
   // store words from file to a vector
-  storeWordsInVector(wordList, "dictionary.txt" );
-  cout << "Total number of words in dictionary file: " << wordList.size() << endl << endl;
+  storeWordsInVector(dictionary, "dictionary.txt" );
+  cout << "Total number of words in dictionary file: " << dictionary.size() << endl << endl;
 
-  // gettin word occurance from wordList and saving them in wordOccuranceQuantity
-  getWordOccurance(wordOccuranceQuantity, wordList);
+  // gettin word occurance from dictionary and saving them in wordOccuranceQuantity
+  getWordOccurance(wordOccuranceQuantity, dictionary);
 
   // just print the qty of words with perticular length.
   printQuantity(wordOccuranceQuantity);
@@ -151,7 +187,7 @@ int main() {
 
       switch(userChoice){
         case 1:
-            
+
             break;
         case 2:
             break;
