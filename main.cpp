@@ -156,6 +156,8 @@ int main() {
   vector<int> wordOccuranceQuantity;
   int wordLength = 3;
   int userChoice;
+  string startWord = "dog";
+  string endWord = "cat";
 
   // store words from file to a vector
   storeWordsInVector(dictionary, "dictionary.txt" );
@@ -170,7 +172,7 @@ int main() {
   // taking user input and making sure its within word length range
   while(1){
       cout << "Currently we have " << wordOccuranceQuantity.at(wordLength - 1) << " words of length " << wordLength << " in the dictionary." << endl;
-      cout << "Changing from 'dog' to 'cat'\n" << endl;
+      cout << "Changing from '"<< startWord << "' to '"<< endWord <<"'\n" << endl;
 
       cout << "Choose from the following options: \n"
            << "  1. Change the word length \n"
@@ -186,26 +188,40 @@ int main() {
       cout << endl;
 
       switch(userChoice){
-        case 1:
+        case 1: // 1. Change the word length
+            cout << "What length words do you want to use? ";
+            cin  >> wordLength; // updating user word length
+            cout << endl;
 
+            // resetting start and end words;
+            startWord = "";
+            endWord = "";
             break;
-        case 2:
+
+        case 2: // FIXME Lilly
             break;
-        case 3:
+
+        case 3: // FIXME Lilly
             break;
+
         case 4:
             break;
+
         case 5:
             break;
+
         case 6:
             break;
+
         case 7:
             break;
-        case 8:
+
+        case 8: //8. Exit the program
             cout << "Exitting the prgram\n" << endl;
             exit(-1); // exit the program
             break;
-        default:
+
+        default: // invalud responce
           while(1){ // waiting for the user to input a right input
              cout << "invalid response! try again!!" << endl; // if user choice is in the range
 
