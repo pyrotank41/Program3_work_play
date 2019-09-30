@@ -140,9 +140,13 @@ void printQuantity(vector<int> wordOccuranceQuantity){
 } // printQuantity() ends here
 
 
-vector<string> findSequence(string startWord, string endWord,vector<string> dictionary, int debug = 0){
+int findSequence(string startWord,
+                string endWord,
+                vector<string> dictionary,
+                vector<string> & tempVector,
+                vector<int> & sequenceIndexVector,
+                int debug = 0){
 
-  vector<string> tempVector; // FIXME, put me in main() later
   tempVector.push_back(startWord);
   string tempString;
 
@@ -165,7 +169,6 @@ vector<string> findSequence(string startWord, string endWord,vector<string> dict
         if( binarySearch(tempString, dictionary) != -1){
 
           bool wordFound = false;
-          
           // simple search algorithm to make sure if any
           for (int sIndex = 0; sIndex < tempVector.size(); sIndex++){
             if(tempString == tempVector.at(sIndex)){
@@ -191,7 +194,7 @@ vector<string> findSequence(string startWord, string endWord,vector<string> dict
         // if endword is found then break out of this function
         if(tempVector.at(j) == endWord){
           cout << endl << "\nWinning sequence was found!" << endl << endl;
-          return tempVector;
+          return 1;
         }
       }
 
@@ -202,7 +205,7 @@ vector<string> findSequence(string startWord, string endWord,vector<string> dict
         // if endword is found then break out of this function
         if(tempVector.at(j) == endWord){
           cout << endl << "\nWinning sequence was found!" << endl << endl;
-          return tempVector;
+          return 1;
         }
       }
     }
@@ -232,6 +235,8 @@ int main() {
 
   // initializing vectors
   vector<string> dictionary;
+  vector<string> sequenceVector;
+  vector<int> sequenceIndexVector;
   vector<int> wordOccuranceQuantity;
   int wordLength = 3;
   int userChoice;
@@ -283,20 +288,20 @@ int main() {
         case 3: // FIXME Lilly
             break;
 
-        case 4:
+        case 4: // FIXME Lilly
             break;
 
         case 5: //Find the end word with debug
-            findSequence(startWord, endWord, dictionary, 1);
+            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector, 1);
             break;
 
         case 6: //Find the end word WITHOUT debug but success.
-            findSequence(startWord, endWord, dictionary, 2);
+            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector, 2);
             break;
 
         case 7: //Display an answer sequence
-            vector<string> sequenceVector = findSequence(startWord, endWord, dictionary);
-            displayAnsSeq(sequence);
+            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector);
+            displayAnsSeq(sequenceVector);
             break;
 
         case 8: //8. Exit the program
