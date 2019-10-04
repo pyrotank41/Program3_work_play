@@ -31,7 +31,7 @@ void displayIdInfo()
          << " \n";
 }//end displayIDInfo()
 
-//binarySearch() starts here ----------------------------------------------------------------
+// binarySearch() starts here ----------------------------------------------------------------
 int binarySearch(string searchWord, vector< string> dictionary){
 
     int low, mid, high;     // array indices for binary search
@@ -61,9 +61,19 @@ int binarySearch(string searchWord, vector< string> dictionary){
     return -1;
 }//end binarySearch()
 
+// regular search for when we dont have a sorted vector. - ------------------------------------
+int regularSearch(string searchWord, vector<string> & listOfWords){
+  for (int sIndex = 0; sIndex < listOfWords.size(); sIndex++){
+    if(listOfWords.at(sIndex).compare(searchWord) == 0){
+      return sIndex; // return the index of the word found
+    }
+  }
+  return -1; // return -1 if nothing found
+}//regularSearch() ends here
+
 
 // Storing all the words in a words in a vector ----------------------------------------------
-void storeWordsInVector(vector<string>& dictionary, string nameOfFile){
+void storeWordsInVector(vector<string>& dictionary, string nameOfFile, int wordLength = 0){
   ifstream inputFileStream;  // Declare the input file stream
 
   // Open input file
@@ -85,10 +95,20 @@ void storeWordsInVector(vector<string>& dictionary, string nameOfFile){
   int count = 0;
   while(getline(inputFileStream, line)){
     // checking and changing word for capital case word to lowercase.
-    if(isupper(line.at(0))){
-      line.at(0) = tolower(line.at(0));
+
+    // push all the words from the file to the vector
+    if(wordLength == 0){
+      if(isupper(line.at(0))){
+        line.at(0) = tolower(line.at(0));
+      }
+      dictionary.push_back(line);
     }
-    dictionary.push_back(line);
+
+    // pushing only the specific word with specified length to the vector.
+    else if(line.size() == wordLength){
+      dictionary.push_back(line);
+    }
+
   }
   inputFileStream.close();
 
@@ -144,75 +164,58 @@ int findSequence(string startWord,
                 string endWord,
                 vector<string> dictionary,
                 vector<string> & tempVector,
-                vector<int> & sequenceIndexVector,
                 int debug = 0){
 
-  tempVector.push_back(startWord);
+  //this function has turned out to be a mess now, try and make it look clean and eleminate repitation FIXME
+  tempVector.clear(); // just to start wiht a clear slate for the sequence.
+  tempVector.push_back(startWord);// pushing startWord
   string tempString;
 
   int startIndex = 0;
+  int startWordLength = startWord.length();
 
   // think of an explaination here.... lol.. this one just makes senses future karan, dont be lazy and try to understand y this loop ... lmao.
   for(int i = 0; i < tempVector.size(); i++ ){
+
+    if(debug == 1) cout << i << ".  " << tempVector.at(i)<< ":    "; // print when debug is ON
+
     // itterating through all the indexes for of the current word to find possible match in dictionary.
-    for(int index = 0; index < startWord.length(); index++ ){
+    for(int index = 0; index < startWordLength; index++ ){
       // itterating through all the possible combination for changing only one character at a time
+      tempString = tempVector.at(i);
       for(char c = 'a'; c <= 'z'; c++ ){
         // skipping repetation of word, ex if the starting word was dog, c = 'd', then we will skip dog.
         if(tempVector.at(i).at(index) == c){
           continue;
         }
 
-        tempString = tempVector.at(i);
         tempString.at(index) = c;
+        if(regularSearch(tempString, dictionary) != -1){
 
-        if( binarySearch(tempString, dictionary) != -1){
+          int wordFound = regularSearch(tempString, tempVector);
 
-          bool wordFound = false;
-          // simple search algorithm to make sure if any
-          for (int sIndex = 0; sIndex < tempVector.size(); sIndex++){
-            if(tempString == tempVector.at(sIndex)){
-              wordFound = true;
-            }
-          }// simple search algo ends here.
-
-          if(!wordFound){ // if the word was not found push the string in the vector
+          if(wordFound == -1){ // if the word is not found push the string in the vector.
               tempVector.push_back(tempString);
+
+              if(debug == 1) {
+                cout << tempVector.size()-1 << ":"<< tempVector.back()<< " ";
+              }
+
+              if(tempString == endWord){ // breaking out of the loop once endword is found.
+
+                  cout << endl << "\nWinning sequence was found!" << endl << endl;
+
+                return 1;
+              }
           }
         }// binary search in dictionary ends here.
       }// char iteration one word ends here.
     }// index iteration ends here.
 
-
-    if(debug == 1){ // debug mode on
-
-      cout << i << ".  " << tempVector.at(i)<< ":    ";
-
-      for(int j = startIndex + 1; j < tempVector.size(); j++){
-        cout << j << ":"<<tempVector.at(j)<< " ";
-
-        // if endword is found then break out of this function
-        if(tempVector.at(j) == endWord){
-          cout << endl << "\nWinning sequence was found!" << endl << endl;
-          return 1;
-        }
-      }
-
-      cout << endl;
-    }
-    else if( debug == 2){
-      for(int j = startIndex + 1; j < tempVector.size(); j++){
-        // if endword is found then break out of this function
-        if(tempVector.at(j) == endWord){
-          cout << endl << "\nWinning sequence was found!" << endl << endl;
-          return 1;
-        }
-      }
-    }
-
     // start index is set to current tempVector size-1, so in next print cycle
     // it starts from previously left position i.e non printed terms.
     startIndex = tempVector.size()-1;
+    if(debug == 1)cout << endl;
   }
 
 }//findSequence() ends here.
@@ -220,11 +223,23 @@ int findSequence(string startWord,
 //displayAnsSeq starts here ----------------------------------------------------------------------
 void displayAnsSeq(vector<string> sequenceVector){
 
-  for(int i = 0; i < sequenceVector.at(0).size(); i++){
+  string startWord = sequenceVector.at(0);
+  string endWord = sequenceVector.back();
+  cout << "Winning sequence in reverse order is:" << endl;
 
+  cout << setw(5) << sequenceVector.size()-1 << ".";
+  cout << " " << endWord << endl;
+
+  string tempString = endWord;
+  for(int i = endWord.length()-1; i >= 0; i--){
+    tempString.at(i) = startWord.at(i);
+    int index = regularSearch( tempString, sequenceVector );
+    if(index != -1){
+      cout << setw(5) << index << ".";
+      cout << " " << sequenceVector.at(index) << endl;
+    }
   }
-
-
+  cout << endl;
 }//displayAnsSeq() ends here.
 
 // main() starts here ----------------------------------------------------------------------------
@@ -234,21 +249,26 @@ int main() {
   displayIdInfo();
 
   // initializing vectors
+  vector<string> wholeDictionary;
   vector<string> dictionary;
   vector<string> sequenceVector;
   vector<int> sequenceIndexVector;
   vector<int> wordOccuranceQuantity;
-  int wordLength = 3;
   int userChoice;
   string startWord = "dog";
   string endWord = "cat";
+  int wordLength = startWord.length();
 
-  // store words from file to a vector
-  storeWordsInVector(dictionary, "dictionary.txt" );
+  // storing all the words from the dictionary.
+  storeWordsInVector(wholeDictionary, "dictionary.txt");
   cout << "Total number of words in dictionary file: " << dictionary.size() << endl << endl;
 
+  // storing specific words of perticular wordLength from file to a vector
+  storeWordsInVector(dictionary, "dictionary.txt", wordLength);
+
+
   // gettin word occurance from dictionary and saving them in wordOccuranceQuantity
-  getWordOccurance(wordOccuranceQuantity, dictionary);
+  getWordOccurance(wordOccuranceQuantity, wholeDictionary);
 
   // just print the qty of words with perticular length.
   printQuantity(wordOccuranceQuantity);
@@ -292,16 +312,20 @@ int main() {
             break;
 
         case 5: //Find the end word with debug
-            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector, 1);
+            findSequence(startWord, endWord, dictionary, sequenceVector, 1);
             break;
 
         case 6: //Find the end word WITHOUT debug but success.
-            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector, 2);
+            findSequence(startWord, endWord, dictionary, sequenceVector);
             break;
 
         case 7: //Display an answer sequence
-            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector);
-            displayAnsSeq(sequenceVector);
+            if(sequenceVector.size() == 0){
+              cout << "   *** You must find the solution before displaying it." << endl;
+            }
+            else{
+              displayAnsSeq(sequenceVector);
+            }
             break;
 
         case 8: //8. Exit the program
@@ -315,7 +339,7 @@ int main() {
              cout << "Your choice -> ";
              cin  >> userChoice;
              cout << endl;
-             if(userChoice < 9 && userChoice > 0){
+             if(userChoice < 9 && userChoice >= 0){
                break;
              }
           }
