@@ -97,10 +97,10 @@ void storeWordsInVector(vector<string>& dictionary, string nameOfFile, int wordL
     // checking and changing word for capital case word to lowercase.
 
     // push all the words from the file to the vector
+    if(isupper(line.at(0))){
+      line.at(0) = tolower(line.at(0));
+    }
     if(wordLength == 0){
-      if(isupper(line.at(0))){
-        line.at(0) = tolower(line.at(0));
-      }
       dictionary.push_back(line);
     }
 
@@ -255,8 +255,8 @@ int main() {
   vector<int> sequenceIndexVector;
   vector<int> wordOccuranceQuantity;
   int userChoice;
-  string startWord = "dog";
-  string endWord = "cat";
+  string startWord = "work";
+  string endWord = "play";
   int wordLength = startWord.length();
 
   // storing all the words from the dictionary.
