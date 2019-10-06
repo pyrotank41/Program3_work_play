@@ -159,7 +159,7 @@ void printQuantity(vector<int> wordOccuranceQuantity){
   cout << endl;
 } // printQuantity() ends here
 
-
+// find sequence() starts here ------------------------------------------------------------------------------------------------------------
 int findSequence(string startWord,
                 string endWord,
                 vector<string> dictionary,
@@ -251,7 +251,7 @@ void displaySeq( vector<string> sequenceVector, vector<int> sequenceIndexVector)
 
   }
 
-}
+}// displaySeq() ends here.
 
 // main() starts here ----------------------------------------------------------------------------
 int main() {
