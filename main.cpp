@@ -163,42 +163,47 @@ void printQuantity(vector<int> wordOccuranceQuantity){
 int findSequence(string startWord,
                 string endWord,
                 vector<string> dictionary,
-                vector<string> & tempVector,
+                vector<string> &sequenceVector, //stores the word sequence in the vector
+                vector<int> &sequenceIndexVector,
                 int debug = 0){
 
   //this function has turned out to be a mess now, try and make it look clean and eleminate repitation FIXME
-  tempVector.clear(); // just to start wiht a clear slate for the sequence.
-  tempVector.push_back(startWord);// pushing startWord
+  sequenceVector.clear(); // just to start with a clear slate for the sequence.
+  sequenceIndexVector.clear(); // same as above.
+  //vector<string> sequenceVector; //temp vector to store the psudo sequence.
+  sequenceVector.push_back(startWord);// pushing startWord
+  sequenceIndexVector.push_back(0);
   string tempString;
 
   int startIndex = 0;
   int startWordLength = startWord.length();
 
   // think of an explaination here.... lol.. this one just makes senses future karan, dont be lazy and try to understand y this loop ... lmao.
-  for(int i = 0; i < tempVector.size(); i++ ){
+  for(int i = 0; i < sequenceVector.size(); i++ ){
 
-    if(debug == 1) cout << i << ".  " << tempVector.at(i)<< ":    "; // print when debug is ON
+    if(debug == 1) cout << i << ".  " << sequenceVector.at(i)<< ":    "; // print when debug is ON
 
     // itterating through all the indexes for of the current word to find possible match in dictionary.
     for(int index = 0; index < startWordLength; index++ ){
       // itterating through all the possible combination for changing only one character at a time
-      tempString = tempVector.at(i);
+      tempString = sequenceVector.at(i);
       for(char c = 'a'; c <= 'z'; c++ ){
         // skipping repetation of word, ex if the starting word was dog, c = 'd', then we will skip dog.
-        if(tempVector.at(i).at(index) == c){
+        if(sequenceVector.at(i).at(index) == c){
           continue;
         }
 
         tempString.at(index) = c;
         if(regularSearch(tempString, dictionary) != -1){
 
-          int wordFound = regularSearch(tempString, tempVector);
+          int wordFound = regularSearch(tempString, sequenceVector);
 
           if(wordFound == -1){ // if the word is not found push the string in the vector.
-              tempVector.push_back(tempString);
+              sequenceVector.push_back(tempString);
+              sequenceIndexVector.push_back(i);
 
               if(debug == 1) {
-                cout << tempVector.size()-1 << ":"<< tempVector.back()<< " ";
+                cout << sequenceVector.size()-1 << ":"<< sequenceVector.back()<< " ";
               }
 
               if(tempString == endWord){ // breaking out of the loop once endword is found.
@@ -212,35 +217,41 @@ int findSequence(string startWord,
       }// char iteration one word ends here.
     }// index iteration ends here.
 
-    // start index is set to current tempVector size-1, so in next print cycle
+    // start index is set to current sequenceVector size-1, so in next print cycle
     // it starts from previously left position i.e non printed terms.
-    startIndex = tempVector.size()-1;
+    startIndex = sequenceVector.size()-1;
     if(debug == 1)cout << endl;
   }
 
 }//findSequence() ends here.
 
-//displayAnsSeq starts here ----------------------------------------------------------------------
-void displayAnsSeq(vector<string> sequenceVector){
-
+//displaySeq() starts here -------------------------------------------------------------------------------------
+void displaySeq( vector<string> sequenceVector, vector<int> sequenceIndexVector){
   string startWord = sequenceVector.at(0);
   string endWord = sequenceVector.back();
+
   cout << "Winning sequence in reverse order is:" << endl;
 
   cout << setw(5) << sequenceVector.size()-1 << ".";
   cout << " " << endWord << endl;
 
-  string tempString = endWord;
-  for(int i = endWord.length()-1; i >= 0; i--){
-    tempString.at(i) = startWord.at(i);
-    int index = regularSearch( tempString, sequenceVector );
-    if(index != -1){
-      cout << setw(5) << index << ".";
-      cout << " " << sequenceVector.at(index) << endl;
+  int parentIndex = sequenceIndexVector.at(sequenceVector.size()-1); // setting parent index of the last word
+  string word = sequenceVector.at(parentIndex); //getting 1st parent word.
+
+  while(1){
+    cout << setw(5) << parentIndex << ".";
+    cout << " " << word << endl;
+
+    if(word.compare(startWord) == 0){
+      break; // break out of the loop once we reach start word.
     }
+
+    parentIndex = sequenceIndexVector.at(regularSearch(word, sequenceVector));
+    word = sequenceVector.at(parentIndex);
+
   }
-  cout << endl;
-}//displayAnsSeq() ends here.
+
+}
 
 // main() starts here ----------------------------------------------------------------------------
 int main() {
@@ -312,19 +323,20 @@ int main() {
             break;
 
         case 5: //Find the end word with debug
-            findSequence(startWord, endWord, dictionary, sequenceVector, 1);
+            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector, 1);
             break;
 
         case 6: //Find the end word WITHOUT debug but success.
-            findSequence(startWord, endWord, dictionary, sequenceVector);
+            findSequence(startWord, endWord, dictionary, sequenceVector, sequenceIndexVector);
             break;
 
         case 7: //Display an answer sequence
             if(sequenceVector.size() == 0){
-              cout << "   *** You must find the solution before displaying it." << endl;
+              cout << "   *** You must find the solution before displaying it." << endl << endl;
             }
             else{
-              displayAnsSeq(sequenceVector);
+              displaySeq(sequenceVector, sequenceIndexVector);
+
             }
             break;
 
@@ -332,6 +344,19 @@ int main() {
             cout << "Exitting the prgram\n" << endl;
             exit(-1); // exit the program
             break;
+
+
+// FIXME----------------------------------------------------------------------------------
+
+
+        case 9: //9. Test case
+            cout <<  "\n--------------------" << startWord.compare("play") << "--------------------------\n"<< endl;
+
+            break;
+
+// FIXME -----------------------------------------------------------------------------
+
+
 
         default: // invalid responce
           while(1){ // waiting for the user to input a right input
