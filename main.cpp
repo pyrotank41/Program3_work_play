@@ -73,8 +73,9 @@ int regularSearch(string searchWord, vector<string> & listOfWords){
 
 
 // Storing all the words in a words in a vector ----------------------------------------------
-void storeWordsInVector(vector<string>& dictionary, string nameOfFile, int wordLength = 0){
+void storeWordsInVector(vector<string>& dictionary, string nameOfFile, int wordLength = -1){
 
+  dictionary.clear(); // starting with a clean vector to full in new values
   ifstream inputFileStream;  // Declare the input file stream
 
   // Open input file
@@ -101,10 +102,9 @@ void storeWordsInVector(vector<string>& dictionary, string nameOfFile, int wordL
     if(isupper(line.at(0))){
       line.at(0) = tolower(line.at(0));
     }
-    if(wordLength == 0){
+    if(wordLength == -1){ //when wordlength is -1 push in all the words
       dictionary.push_back(line);
     }
-
     // pushing only the specific word with specified length to the vector.
     else if(line.size() == wordLength){
       dictionary.push_back(line);
@@ -190,7 +190,7 @@ void startEndWord( int wordLength, vector<string> tempLengthVector, string &star
           break;
       }
       if(startWord.length() != wordLength ){ // if not appropriate length.
-        cout << "   *** '"<< startWord <<"' is not of length 3. Please retry." << endl;
+        cout << "   *** '"<< startWord <<"' is not of length " << wordLength << ". Please retry." << endl;
       }
       else if (binarySearch(startWord, tempLengthVector) == -1 ) { // not in dictionary.
         cout << "   *** '"<< startWord <<"' is not in the dictionary. Please retry." << endl;
@@ -217,7 +217,7 @@ void startEndWord( int wordLength, vector<string> tempLengthVector, string &star
           break;
       }
       if(endWord.length() != wordLength){// if not appropriate length.
-        cout << "   *** '"<< endWord <<"' is not of length 3. Please retry." << endl;
+        cout << "   *** '"<< endWord <<"' is not of length "<< wordLength << ". Please retry." << endl;
       }
       else if (binarySearch(startWord, tempLengthVector) == -1 ){ // not in dictionary.
         cout << "   *** '"<< endWord <<"' is not in the dictionary. Please retry." << endl;
