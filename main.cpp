@@ -74,6 +74,7 @@ int regularSearch(string searchWord, vector<string> & listOfWords){
 
 // Storing all the words in a words in a vector ----------------------------------------------
 void storeWordsInVector(vector<string>& dictionary, string nameOfFile, int wordLength = 0){
+
   ifstream inputFileStream;  // Declare the input file stream
 
   // Open input file
@@ -155,11 +156,140 @@ void printQuantity(vector<int> wordOccuranceQuantity){
       cout << setw(6) << wordOccuranceQuantity.at(i) << endl;
     }
   }
-
   cout << endl;
 } // printQuantity() ends here
 
-// find sequence() starts here ------------------------------------------------------------------------------------------------------------
+// displayDictionaryWords() starts here --------------------------------------------------------------------------
+// case 2 by lilly
+void displayDictionaryWords(int &startNum, int &endNum, vector<string> tempLengthVector){
+
+    cout << "About to display dictionary words from " << startNum
+         << " to " << endNum << endl;
+
+    for(int i = startNum; i <= endNum; i++) {
+        cout << i << " " << tempLengthVector.at(i) << endl;
+    }
+    cout << endl << endl;
+
+} //end displayDictionaryWords.
+
+// startEndWord() starts here ------------------------------------------------------------------------------------------------------------
+// case 3 i.e to change start word and end word
+void startEndWord( int wordLength, vector<string> tempLengthVector, string &startWord, string &endWord) {
+
+    //gets startWord and tests all conditions
+    while (1){
+      cout << "\nEnter starting word, or 'r' for a random word: ";
+      cin  >> startWord;
+
+      if(startWord == "exit"){ // exiting program
+          exit(-1);
+      }
+      if(startWord == "r"){ // generating random
+          startWord = tempLengthVector.at(rand() % tempLengthVector.size());
+          break;
+      }
+      if(startWord.length() != wordLength ){ // if not appropriate length.
+        cout << "   *** '"<< startWord <<"' is not of length 3. Please retry." << endl;
+      }
+      else if (binarySearch(startWord, tempLengthVector) == -1 ) { // not in dictionary.
+        cout << "   *** '"<< startWord <<"' is not in the dictionary. Please retry." << endl;
+      }
+      else{ // if no error.
+        break;
+      }// while(1) ends here.
+
+    }
+    cout << endl;
+
+
+    //gets endWord and tests all conditions
+    while (1){
+
+      cout << "Enter ending word, or 'r' for a random word: ";
+      cin  >> endWord;
+
+      if(endWord == "exit"){// exiting program
+          exit(-1);
+      }
+      if(endWord == "r"){// generating random
+          endWord = tempLengthVector.at(rand() % tempLengthVector.size());
+          break;
+      }
+      if(endWord.length() != wordLength){// if not appropriate length.
+        cout << "   *** '"<< endWord <<"' is not of length 3. Please retry." << endl;
+      }
+      else if (binarySearch(startWord, tempLengthVector) == -1 ){ // not in dictionary.
+        cout << "   *** '"<< endWord <<"' is not in the dictionary. Please retry." << endl;
+      }
+      else{ // if no error.
+        break;
+      }
+    }// while(1) ends here.
+    cout << endl;
+
+} // startEndWord() ends here.
+
+// wordChangeGame() starts here -------------------------------------------------------------------------------------------------------------
+// case 4. where user playes the word game.
+void wordChangeGame(string startWord, string endWord, vector<string> dictionary){
+
+
+    string prevWord = startWord;
+    string currWord;
+    int count;
+    int stepCount = 1;
+
+    while(1){
+        count = 0;
+
+        cout << stepCount <<". Previous word is '" << prevWord << "'. Next word: ";
+        cin >> currWord;
+
+        if(currWord == "exit"){
+            exit(-1);
+        }
+        else if(currWord.length() != prevWord.length()){
+            cout << "   *** '" << currWord << "' is not of length "<< prevWord.length() << ". Please retry." << endl;
+            continue;
+        }
+        else if(binarySearch(currWord, dictionary) == -1){
+            cout << "   *** '" << currWord << "' is not in the dictionary. Please retry." << endl;
+            continue;
+        }
+        else{
+          //counts number of char differences
+          for(int i = 0; i < prevWord.length(); i++){
+              if(currWord.at(i) != prevWord.at(i)){
+                  count++;
+              }
+          }
+
+          if(count != 1 ){
+              cout << "*** '" << currWord << "' must be exactly 1 character different. Please retry." << endl;
+              //break;
+          }
+          if(currWord == endWord){
+              break;
+          }
+
+        }
+
+        if(currWord == endWord){
+            cout << endl << "Congratulations, you did it!" << endl;
+            break;
+        }
+        prevWord = currWord;
+        stepCount++;
+
+    } //end while loop
+
+
+
+} //end WordChangeGame
+
+// findSequence() starts here ------------------------------------------------------------------------------------------------------------
+// Function for case 5 and 6.
 int findSequence(string startWord,
                 string endWord,
                 vector<string> dictionary,
@@ -217,7 +347,7 @@ int findSequence(string startWord,
       }// char iteration one word ends here.
     }// index iteration ends here.
 
-    // start index is set to current sequenceVector size-1, so in next print cycle
+    // start index is set to current sequenceVector size - 1, so in next print cycle
     // it starts from previously left position i.e non printed terms.
     startIndex = sequenceVector.size()-1;
     if(debug == 1)cout << endl;
@@ -225,7 +355,8 @@ int findSequence(string startWord,
 
 }//findSequence() ends here.
 
-//displaySeq() starts here -------------------------------------------------------------------------------------
+// displaySeq() starts here -------------------------------------------------------------------------------------
+// case 7. to diaplay the sequence generated in case 5 or 6
 void displaySeq( vector<string> sequenceVector, vector<int> sequenceIndexVector){
   string startWord = sequenceVector.at(0);
   string endWord = sequenceVector.back();
@@ -246,9 +377,9 @@ void displaySeq( vector<string> sequenceVector, vector<int> sequenceIndexVector)
       break; // break out of the loop once we reach start word.
     }
 
+    // opdating the variables so they become the chiled to their parent.
     parentIndex = sequenceIndexVector.at(regularSearch(word, sequenceVector));
     word = sequenceVector.at(parentIndex);
-
   }
 
 }// displaySeq() ends here.
@@ -266,8 +397,8 @@ int main() {
   vector<int> sequenceIndexVector;
   vector<int> wordOccuranceQuantity;
   int userChoice;
-  string startWord = "work";
-  string endWord = "play";
+  string startWord = "dog";
+  string endWord = "cat";
   int wordLength = startWord.length();
 
   // storing all the words from the dictionary.
@@ -313,13 +444,21 @@ int main() {
             endWord = "";
             break;
 
-        case 2: // FIXME Lilly
+        case 2:    //vector of all words length wordLength
+            int startNum, endNum;
+            cout << "Enter the start and end index values of words to display: ";
+            cin >> startNum >> endNum;
+            cout << endl;
+            displayDictionaryWords(startNum, endNum, dictionary);
             break;
 
         case 3: // FIXME Lilly
+            storeWordsInVector(dictionary, "dictionary.txt", wordLength);
+            startEndWord(wordLength, dictionary, startWord, endWord);
             break;
 
         case 4: // FIXME Lilly
+            wordChangeGame(startWord, endWord, dictionary);
             break;
 
         case 5: //Find the end word with debug
