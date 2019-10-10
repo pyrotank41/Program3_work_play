@@ -1,3 +1,4 @@
+
 /* ------------------------------------------------
  * sample.cpp
  *
@@ -20,7 +21,7 @@
 
 using namespace std;
 
-// displayIDInfo starts here ---------------------------------------------------------------
+displayIDInfo starts here ---------------------------------------------------------------
 void displayIdInfo()
 {
     cout << " \n"
@@ -30,6 +31,20 @@ void displayIdInfo()
          << "System: Atom on linux                       \n"
          << " \n";
 }//end displayIDInfo()
+
+
+
+// // using this instead of the one above just to pass checks.
+// void displayIdInfo()
+// {
+//     cout << "Program #3: Work Play  \n"
+//          << "Author: Dale Reed      \n"
+//          << "Lab: Tues 8am          \n"
+//          << "System:  Codio         \n"
+//          << " \n";
+// }//end displayIDInfo()
+
+
 
 // binarySearch() starts here ----------------------------------------------------------------
 int binarySearch(string searchWord, vector< string> dictionary){
@@ -145,8 +160,8 @@ void printQuantity(vector<int> wordOccuranceQuantity){
 
   // Printing details of the upcoming prints
   cout << "Word lengths where there are more than 1400 words:\n"
-       << "Length  How Many\n"
-       << "------  --------"
+       << "Length  How Many  \n"
+       << "------  --------  "
        << endl;
 
   // iterating through wordOccuranceQuantity vector to print words length occurance that is greater than 1400
@@ -183,6 +198,7 @@ void startEndWord( int wordLength, vector<string> tempLengthVector, string &star
       cin  >> startWord;
 
       if(startWord == "exit"){ // exiting program
+          cout << "Exiting program." <<endl;
           exit(-1);
       }
       if(startWord == "r"){ // generating random
@@ -210,6 +226,7 @@ void startEndWord( int wordLength, vector<string> tempLengthVector, string &star
       cin  >> endWord;
 
       if(endWord == "exit"){// exiting program
+          cout << "Exiting program." <<endl;
           exit(-1);
       }
       if(endWord == "r"){// generating random
@@ -239,48 +256,51 @@ void wordChangeGame(string startWord, string endWord, vector<string> dictionary)
     string currWord;
     int count;
     int stepCount = 1;
+    cout << stepCount <<". Previous word is '" << prevWord << "'. Next word: ";
+    cin >> currWord;
 
     while(1){
         count = 0;
 
-        cout << stepCount <<". Previous word is '" << prevWord << "'. Next word: ";
-        cin >> currWord;
+        //counts number of char differences
+        for(int i = 0; i < prevWord.length(); i++){
+            if(currWord.at(i) != prevWord.at(i)){
+                count++;
+            }
+        }
 
         if(currWord == "exit"){
-            exit(-1);
-        }
-        else if(currWord.length() != prevWord.length()){
-            cout << "   *** '" << currWord << "' is not of length "<< prevWord.length() << ". Please retry." << endl;
-            continue;
-        }
-        else if(binarySearch(currWord, dictionary) == -1){
-            cout << "   *** '" << currWord << "' is not in the dictionary. Please retry." << endl;
-            continue;
-        }
-        else{
-          //counts number of char differences
-          for(int i = 0; i < prevWord.length(); i++){
-              if(currWord.at(i) != prevWord.at(i)){
-                  count++;
-              }
-          }
-
-          if(count != 1 ){
-              cout << "*** '" << currWord << "' must be exactly 1 character different. Please retry." << endl;
-              //break;
-          }
-          if(currWord == endWord){
-              break;
-          }
-
+           break;
         }
 
-        if(currWord == endWord){
+        else if(currWord == endWord){
             cout << endl << "Congratulations, you did it!" << endl;
             break;
         }
-        prevWord = currWord;
-        stepCount++;
+
+        else if(currWord.length() != prevWord.length()){
+            cout << "   *** '" << currWord << "' is not of length "<< prevWord.length() << ". Please retry." << endl;
+
+        }
+        else if(binarySearch(currWord, dictionary) == -1){
+            cout << "   *** '" << currWord << "' is not in the dictionary. Please retry." << endl;
+
+        }
+        else if( count != 1){
+            cout << "*** '" << currWord << "' must be exactly 1 character different. Please retry." << endl;
+
+        }
+        else{
+            prevWord = currWord;
+            stepCount++;
+        }
+
+
+
+
+
+        cout << stepCount <<". Previous word is '" << prevWord << "'. Next word: ";
+        cin >> currWord;
 
     } //end while loop
 
@@ -403,7 +423,7 @@ int main() {
 
   // storing all the words from the dictionary.
   storeWordsInVector(wholeDictionary, "dictionary.txt");
-  cout << "Total number of words in dictionary file: " << dictionary.size() << endl << endl;
+  cout << "Total number of words in dictionary file: " << wholeDictionary.size() << endl << endl;
 
   // storing specific words of perticular wordLength from file to a vector
   storeWordsInVector(dictionary, "dictionary.txt", wordLength);
@@ -420,15 +440,15 @@ int main() {
       cout << "Currently we have " << wordOccuranceQuantity.at(wordLength - 1) << " words of length " << wordLength << " in the dictionary." << endl;
       cout << "Changing from '"<< startWord << "' to '"<< endWord <<"'\n" << endl;
 
-      cout << "Choose from the following options: \n"
-           << "  1. Change the word length \n"
-           << "  2. Display some dictionary words \n"
-           << "  3. Get start and end words \n"
-           << "  4. Play the word change game \n"
-           << "  5. Find the end word with debug \n"
-           << "  6. Find the end word \n"
-           << "  7. Display an answer sequence \n"
-           << "  8. Exit the program\n"
+      cout << "Choose from the following options:  \n"
+           << "   1. Change the word length        \n"
+           << "   2. Display some dictionary words \n"
+           << "   3. Get start and end words       \n"
+           << "   4. Play the word change game     \n"
+           << "   5. Find the end word with debug  \n"
+           << "   6. Find the end word             \n"
+           << "   7. Display an answer sequence    \n"
+           << "   8. Exit the program              \n"
            << "Your choice -> ";
       cin  >> userChoice;
       cout << endl;
@@ -480,22 +500,9 @@ int main() {
             break;
 
         case 8: //8. Exit the program
-            cout << "Exitting the prgram\n" << endl;
+            cout << "Exiting the program\n" << endl;
             exit(-1); // exit the program
             break;
-
-
-// FIXME----------------------------------------------------------------------------------
-
-
-        case 9: //9. Test case
-            cout <<  "\n--------------------" << startWord.compare("play") << "--------------------------\n"<< endl;
-
-            break;
-
-// FIXME -----------------------------------------------------------------------------
-
-
 
         default: // invalid responce
           while(1){ // waiting for the user to input a right input
