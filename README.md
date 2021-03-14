@@ -1,4 +1,4 @@
-# Program3_work_play
+# work_play
 
 A program to change one word into another, such as converting work into play.  At each step only a single letter can be changed at a time, and each word must be a word found in the dictionary.  This is inspired by Robert Frost's poem "Two Tramps in Mud Time" where the last stanza is:
 
